@@ -7,6 +7,7 @@ def end(win):
     win.close()
 
 def main():
+    #change
     win = GraphWin("BlackJack", 1000, 720)
     win.setBackground("green")
 
