@@ -2,7 +2,7 @@ from graphics import *
 import math
 
 class Button:
-    def __init__(self, win, center, radius, label, colour, outlineColour):
+    def __init__(self, win, center, radius, label, colour):
         self.x = center.getX()
         self.y = center.getY()
         self.r = radius
@@ -11,7 +11,7 @@ class Button:
         self.circ = Circle(center, radius)
         self.circ.setFill(colour)
         self.circ.setWidth(3)
-        self.circ.setOutline(outlineColour)
+        self.circ.setOutline("black")
 
         self.label = Text(center, label)
         self.label.setSize(30)

@@ -11,7 +11,7 @@ def main():
     win = GraphWin("BlackJack", 1000, 720)
     win.setBackground("green")
 
-    chip = Chip(win, Point(500, 360), 60, 100, "white", "black")
+    chip = Chip(win, Point(500, 360), 60, 100)
     chip.show()
 
     p1 = Point(730, 710)
@@ -37,7 +37,7 @@ def main():
 
         center = Point(x,y)
         radius = 60
-        c = Chip(win,center,radius,i*100,chipColors[i-1],"black")
+        c = Chip(win,center,radius,i*100)
         c.show()
         i +=1
 
