@@ -10,21 +10,9 @@ class Chip(Button):
 
         value = int(value)
         self.value = value
-        self.bet = False
+        self.bet = False #used in readChip (future readBank method for differenting what was clicked)
 
         self.paint(value)
-
-
-    def moveTo(self, point):
-        #position in the bank (on the screen) 
-        #probably going to delete this method
-        print()
-
-    def add():
-        #add the chip to the bet and remove from the bank
-        #probably going to delete this method
-
-        print()
 
     def paint(self, v):
         #set the colour of the chip depending on the value
@@ -36,8 +24,10 @@ class Chip(Button):
                 self.circ.setFill(chipColors[i])
                 break
 
-    def remove():
-        #remove chip from the bet and add to the bank
-        #probably going to delete this method
+    def moveChip(self, initialPoint, final point):
+        #make a clone
+        #show it move
+        #delete the clone
         print()
+
 
