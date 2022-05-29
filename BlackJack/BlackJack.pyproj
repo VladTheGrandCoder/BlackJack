@@ -25,16 +25,19 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="BlackJack.py" />
+    <Compile Include="Card.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Chip.py">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Button.py">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="graphics.py" />
-    <Compile Include="squareButton.py">
+    <Compile Include="Dealer.py">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="graphics.py" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Cards\" />

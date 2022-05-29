@@ -12,9 +12,9 @@ def main():
     win = GraphWin("BlackJack", 1000, 720)
     win.setBackground("green")
     
-    bank = Bank(win, 1020)
-    bank.makeBank()
+    bank = Bank(win, 1020, "dealer")
     bank.readBank()
+
     end(win)
 main()
 

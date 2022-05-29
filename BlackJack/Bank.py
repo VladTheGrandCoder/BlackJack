@@ -2,12 +2,13 @@ from Chip import Chip
 from graphics import *
 from Button import Button
 class Bank:
-    def __init__(self, win, cash):
+    def __init__(self, win, cash, dealer):
         self.win = win
+        self.dealer = dealer
 
         self.cash = cash #all of the money subtract bet
         self.bet = 0 #total value in the stack
-        self.top = 0 #this variable represents the index of top chip (from 0 to 9)
+        self.top = cash #this variable represents the index of top chip (from 0 to 9)
 
         self.stack = [] #array of the chip chip objects in the center
         self.stackTracker = [] #tracks the indexes of stack (bottom to top)
@@ -20,19 +21,36 @@ class Bank:
         self.cashText = 0 #the remaining cash on top of the box
         self.deal = 0 #deal button
 
+        self.makeBank()
 
-    def showBank():
-        #shows the chips and calls readBank method
+    def showBank(self):#called after the deal is over
+        #shows the chips and and deal button
+        self.cashText.draw(self.win)
+        self.deal.show()
+        #update the top after the deal is over
+        self.updateTop()
+        #fills and starts reading the bank
+        self.fillBank()
+        self.readBank()
 
-
-        print()
-
-    def hideBank():
+    def hideBank(self):#called before the deal
         #hides everything except for the stack and the bet amount
         #called when the readBank loop breaks
 
+        #hide the betting chips
+        for chip in self.chips:
+            chip.hide()
 
-        print()
+        #hide box, cash and the deal button
+        self.box.undraw()
+        self.cashText.undraw()
+        self.deal.hide()
+
+        #active the Dealer class and call DealCards() method
+
+        ##Next 2 lines are test code. Delete them later
+        ##self.win.getMouse()   
+        ##self.showBank()    
 
     def makeChip(self, value, point):#create chip object and hide it
             chip = Chip(self.win, point, 60, value)
@@ -45,6 +63,7 @@ class Bank:
         self.deal = Button(self.win,Point(890, 610),55,"Deal","lightgreen")
         self.deal.body.setWidth(1)
         self.deal.label.setSize(27)
+        self.deal.show()
         ##Show bet value beside the stack
         self.betText = Text(Point(580, 360),"${0}".format(self.bet))
         self.betText.setTextColor("white")
@@ -93,9 +112,10 @@ class Bank:
             self.fillBank()
 
     def fillBank(self):#fill bank with the highest possible chips 
-
+        #update money values
         self.cashText.setText("Cash: ${0:6<}".format(self.cash))
         self.betText.setText("${0}".format(self.bet))
+
         #hide all chips
         for chip in self.chips: 
            chip.hide()
@@ -105,10 +125,16 @@ class Bank:
             if(chip.value <= self.cash):
                 chip.show()
 
+    def updateTop(self):
+        curVal = self.cash + self.bet
+        if (curVal > self.top):
+            self.top = curVal
 
     def readBank(self):
         #determines what was clicked
         #keep reading until the user decides to deal cards
+        ###ADD a button that would allow to finish the game by withdrawling cash
+        ###CHECK if the user has any money left. End game if no
         while(True):
             p = self.win.getMouse()
 
@@ -152,6 +178,3 @@ class Bank:
                     #removing animation
                     self.fillBank()
                     break
-
-            ##Make a list that tracks stack chip indexes (stackTracker)
-            ##When stack is clicked, hide the top index, delete last element from stackTracker array and show the new last element
