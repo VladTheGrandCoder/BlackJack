@@ -8,10 +8,10 @@ class Button:
         self.r = radius
         self.win = win
 
-        self.circ = Circle(center, radius)
-        self.circ.setFill(colour)
-        self.circ.setWidth(3)
-        self.circ.setOutline("black")
+        self.body = Circle(center, radius)
+        self.body.setFill(colour)
+        self.body.setWidth(3)
+        self.body.setOutline("black")
 
         self.label = Text(center, label)
         self.label.setSize(30)
@@ -21,14 +21,14 @@ class Button:
     def hide(self):
         #hides the button from the user and does not check if clicked 
         if(self.visible):
-            self.circ.undraw()
+            self.body.undraw()
             self.label.undraw()
             self.visible = False
 
     def show(self):
         #shows the button to the user and checks if clicked
         if(not self.visible):
-            self.circ.draw(self.win)
+            self.body.draw(self.win)
             self.label.draw(self.win)
             self.visible = True
 

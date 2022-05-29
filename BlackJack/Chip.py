@@ -21,10 +21,10 @@ class Chip(Button):
 
         for i in range(0,10,1):
             if(v == chipVals[i]):
-                self.circ.setFill(chipColors[i])
+                self.body.setFill(chipColors[i])
                 break
 
-    def moveChip(self, initialPoint, final point):
+    def moveChip(self, initialPoint, finalPoint):
         #make a clone
         #show it move
         #delete the clone
