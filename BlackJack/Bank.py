@@ -2,9 +2,8 @@ from Chip import Chip
 from graphics import *
 from Button import Button
 class Bank:
-    def __init__(self, win, cash, dealer):
+    def __init__(self, win, cash):
         self.win = win
-        self.dealer = dealer
 
         self.cash = cash #all of the money subtract bet
         self.bet = 0 #total value in the stack
