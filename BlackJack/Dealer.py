@@ -9,12 +9,12 @@ class Dealer():
         self.bank = Bank(win, userCash)
 
         self.deck = [] #array of all possible card objects
-        self.shoe = [0] *432 #sets decks of numbers from 0 to 52 representing a card 
+        self.shoe = [0] *432 #8 sets of numbers from 0 to 51 representing a card indexes in the deck
                         #(every number is an index of a specific card in self.deck)
         self.NumDrawn = 0
 
-        self.userHand = Hand(self.win, 550)
-        self.dealerHand = Hand(self.win, 170)
+        self.userHand = Hand(self.win, 550, "Player")
+        self.dealerHand = Hand(self.win, 170, "Dealer")
 
         self.splitHands = [] #list of split hands that are not being played at the moment
 
@@ -60,7 +60,7 @@ class Dealer():
         takenIndexes = []
 
         for i in range(8):
-            for j in range(0,54,1):
+            for j in range(0,52,1):
                 
                     index = self.makeIndex(takenIndexes)
                     takenIndexes.append(index)
@@ -95,7 +95,7 @@ class Dealer():
         self.userHand.draw(card3)
 
         card4 = self.deck[self.shoe[-1-self.NumDrawn]]
-        card4.open = False
+        card4.open = True
         self.NumDrawn += 1
         self.dealerHand.draw(card4) #hidden card
 

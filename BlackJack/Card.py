@@ -6,15 +6,23 @@ class Card():
         self.win = win
 
         self.front = Image(Point(0,0),image)    #front image
-        self.back = 0                           #make it equal to the back image
+        self.back = Image(Point(0,0), "Cards\back.png")  #back image
         self.open = True                       #whether the front is open 
-        self.isAce = False
+        self.isAce = False                      ##Mybe dump this variable and just check for value 11
 
     def moveCard(self, x, y):
         self.front.move(x,y)
+        self.back.move(x,y)
 
     def show(self):
-        self.front.draw(self.win)
+        if self.open:
+            self.front.draw(self.win)
+        else:
+            self.back.draw(self.win)
+        pass
+
+    def hide(self):
+        self.front.undraw(self.win)
 
 
 
