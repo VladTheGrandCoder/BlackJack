@@ -28,6 +28,9 @@
     <Compile Include="Card.py">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Casino.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Chip.py">
       <SubType>Code</SubType>
     </Compile>
@@ -86,7 +89,7 @@
     <Content Include="Cards\ace_of_diamonds.png" />
     <Content Include="Cards\ace_of_hearts.png" />
     <Content Include="Cards\ace_of_spades2.png" />
-    <Content Include="Cards\back.png" />
+    <Content Include="Cards\card_back.png" />
     <Content Include="Cards\jack_of_clubs.png" />
     <Content Include="Cards\jack_of_clubs2.png" />
     <Content Include="Cards\jack_of_diamonds.png" />

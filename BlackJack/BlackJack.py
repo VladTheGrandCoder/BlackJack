@@ -3,6 +3,7 @@ from Button import Button
 from Chip import Chip
 from Bank import Bank
 from Dealer import Dealer
+from Casino import Casino
 
 def end(win):
     win.getMouse()
@@ -13,10 +14,10 @@ def main():
     win = GraphWin("BlackJack", 1000, 720)
     win.setBackground("green")
     
-    #bank = Bank(win, 1020, "dealer")
-    dearler = Dealer(win, 1020)
-
-    
+    bank = Bank(win, 10020)
+    dealer = Dealer(win, 1020)
+    casino = Casino(bank, dealer)
+    casino.play()
 
     end(win)
 main()

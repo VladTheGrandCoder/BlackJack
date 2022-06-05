@@ -14,22 +14,30 @@ class Hand():
         self.name = name
         self.makeLabel()
 
-
-
     def makeLabel(self):
         self.label = Text(Point(self.cardX + 400, self.cardY), "{0} {1}".format(self.sum, self.name))
         self.label.setSize(25)
         self.label.setFill("white")
-        self.label.draw(self.win)
 
     def updateText(self):
         self.label.setText("{0} {1}".format(self.sum, self.name))
+
+    def show(self):
+        self.label.draw(self.win)
+        try:
+            for card in self.cards:
+                card.show()
+        except:
+            pass
 
     def deactivate(self):
         #hide the cards in the hand
         #show a rectangle image with hand sum in the right bottom corner
         #add this card to a to the splitHands list in Dealer class
-        pass
+        self.label.undraw()
+        for card in self.cards:
+            card.hide()
+        
     def draw(self, card):
         #adds the specific card to the hand
         #update the sum
@@ -41,9 +49,17 @@ class Hand():
             self.sum += card.value
         self.updateText()
 
-    def openCard():
-        ##opens dealers card
-        pass
+    def openCard(self): #opens hidden card. Only called once
+        card = self.cards[0]
+        card.open = True
+        self.sum += card.value
+        card.show()
+                
+        for card in self.cards: #this loop stacks card on top of each other so they overlap properly
+            card.hide()
+            card.show()
+
+        self.updateText()
 
     def flipAce(self): #True if ace was flipped. False if no available aces
         for card in self.cards:

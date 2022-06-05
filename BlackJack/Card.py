@@ -2,11 +2,12 @@ from graphics import *
 class Card():
     def __init__(self, index, image, value, win):
         self.index = index #index from 1 to 52 ###I dont know if I actually need it 
+        self.image = image #used for cloning
         self.value = value #value in the game of BlackJack
         self.win = win
 
         self.front = Image(Point(0,0),image)    #front image
-        self.back = Image(Point(0,0), "Cards\back.png")  #back image
+        self.back = Image(Point(0,0), "Cards\card_back.png")  #back image
         self.open = True                       #whether the front is open 
         self.isAce = False                      ##Mybe dump this variable and just check for value 11
 
@@ -16,13 +17,19 @@ class Card():
 
     def show(self):
         if self.open:
+            try:
+                self.back.undraw()
+            except:
+                pass
             self.front.draw(self.win)
         else:
             self.back.draw(self.win)
         pass
 
     def hide(self):
-        self.front.undraw(self.win)
+        self.front.undraw()
 
+    def clone(self):
+        return Card(self.index,self.image,self.value,self.win)
 
 
