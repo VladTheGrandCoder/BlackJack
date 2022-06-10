@@ -14,7 +14,7 @@ class Dealer():
 
         self.NumDrawn = 0 #reshuffle when this reaches 180
 
-        self.userHand = Hand(self.win, 550, "Player")
+        self.playerHand = Hand(self.win, 550, "Player")
         self.dealerHand = Hand(self.win, 170, "Dealer")
 
         self.splitHands = [] #list of split hands that are not being played at the moment
@@ -22,7 +22,7 @@ class Dealer():
         self.standButton = Button(win,Point(710,360),60,"Stand","lightgreen")
         self.hitButton = Button(win, Point(300,360),60,"Hit","lightgreen")
 
-
+        self.abstractX = 700
 
         self.fillDeck()
         self.shuffle()
@@ -80,7 +80,7 @@ class Dealer():
         self.standButton.show()
         self.hitButton.show()
 
-        self.userHand.show()
+        self.playerHand.show()
         self.dealerHand.show()
         pass
 
@@ -90,21 +90,21 @@ class Dealer():
 
         pass
 
-    def __drawCard__(self):
+    def __drawCard__(self):#Draws card from the deck. Returns the card drawn
         self.NumDrawn += 1
         card = self.deck[self.shoe[-1-self.NumDrawn]].clone()
         return card
 
     def initialDraw(self):
         card1 = self.__drawCard__()
-        self.userHand.draw(card1)
+        self.playerHand.draw(card1)
         
         card2 = self.__drawCard__()
         card2.open = False
         self.dealerHand.draw(card2) #hidden card
 
         card3 = self.__drawCard__()
-        self.userHand.draw(card3)
+        self.playerHand.draw(card3)
 
         card4 = self.__drawCard__()
         self.dealerHand.draw(card4)
@@ -112,11 +112,11 @@ class Dealer():
     def readAction(self):        #reads buttons and check hand values
         while(True):
 
-            if(self.userHand.checkStatus() == 1):
+            if(self.playerHand.checkStatus() == 1):
                 print("blackJack")
                 self.dealerHand.openCard()
                 break
-            elif(self.userHand.checkStatus() == 2):
+            elif(self.playerHand.checkStatus() == 2):
                 print("bust")
                 self.dealerHand.openCard()
                 break
@@ -125,7 +125,7 @@ class Dealer():
 
             if(self.hitButton.clicked(p)):
                 card = self.__drawCard__()
-                self.userHand.draw(card)
+                self.playerHand.draw(card)
             elif(self.standButton.clicked(p)):
                 self.dealerHand.openCard()
                 break
@@ -135,14 +135,33 @@ class Dealer():
     def hit():
         pass
 
-    def stand():
-        pass
+    def stand(self):
+
+        for i in range(len(self.splitHands)): #Checks for unplayed hands in the split
+            hand = self.splitHands[i]
+            if (not hand.abstract.played): #If the Hand has not been played, play if
+                self.playerHand.makeAbstract(self.abstractX)
+                self.playerHand.abstract.show()
+                self.splitHands[i] = self.playerHand
+
+                self.playerHand = hand
+                self.playerHand.show()
+                #self.readAction() Idk what is the best way to get back to reading the action and break from here at the same time
+                #Got to figure it out next time
+
 
     def doubleUp():
         pass
 
-    def split():
-        pass
+    def split(self):
+        #make a new hand. Add one of the playerHand cards to the hand. Delete that card from playerHand.
+        #add the new hand to the self.splitHands
+        card = self.playerHand.cards[1].clone()
+
+        splitHands.append(Hand(self.win))
+
+        del self.playerHand.cards[1]
+
 
     def insurace():
         pass

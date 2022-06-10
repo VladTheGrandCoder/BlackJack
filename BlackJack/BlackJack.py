@@ -14,7 +14,7 @@ def main():
     win = GraphWin("BlackJack", 1000, 720)
     win.setBackground("green")
     
-    bank = Bank(win, 10020)
+    bank = Bank(win, 1000)
     dealer = Dealer(win, 1020)
     casino = Casino(bank, dealer)
     casino.play()

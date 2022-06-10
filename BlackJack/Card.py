@@ -11,7 +11,7 @@ class Card():
         self.open = True                       #whether the front is open 
         self.isAce = False                      ##Mybe dump this variable and just check for value 11
 
-    def moveCard(self, x, y):
+    def moveCard(self, x, y): #moves card to (x, y). Only call upon the initial creation of the card.
         self.front.move(x,y)
         self.back.move(x,y)
 
@@ -24,12 +24,10 @@ class Card():
             self.front.draw(self.win)
         else:
             self.back.draw(self.win)
-        pass
+        pass#Make the card visible
 
-    def hide(self):
+    def hide(self):#Hide the card
         self.front.undraw()
 
-    def clone(self):
+    def clone(self): #Returns the copy of the card
         return Card(self.index,self.image,self.value,self.win)
-
-

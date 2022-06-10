@@ -29,5 +29,3 @@ class Chip(Button):
         #show it move
         #delete the clone
         print()
-
-

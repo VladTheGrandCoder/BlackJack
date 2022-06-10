@@ -1,45 +1,58 @@
 from graphics import *
+from Abstract import Abstract
 class Hand():
     def __init__(self, win, cardY, name):
         self.win = win
 
-        self.cards = []
-        self.sum = 0
-        self.active = True
+        self.cards = [] #Arrays of card objects the hand contains
+        self.sum = 0    #Total sum of all of the card values in the hand
+        self.active = True #Whether the hand is being played right now, or has been set aside due to split
 
-        self.cardX = 400
+        self.cardX = 400        #Coordinates of the cards in the hand
         self.cardY = cardY
 
-        self.label = {}
+        self.label = {}         #The next 3 lines generate the label or "player name" and the hand's score
         self.name = name
         self.makeLabel()
 
-    def makeLabel(self):
+        self.abstract = 0      #The rectangle with a number in the bottom right corner. Used to keep track of splits
+
+    def makeLabel(self):        #Creates a lable Text object which shows Hand.name and Hand.sum
         self.label = Text(Point(self.cardX + 400, self.cardY), "{0} {1}".format(self.sum, self.name))
         self.label.setSize(25)
         self.label.setFill("white")
 
-    def updateText(self):
+    def updateText(self):       #Updates the sum value when a card is added/removed from the hand
         self.label.setText("{0} {1}".format(self.sum, self.name))
 
-    def show(self):
+    def show(self):     #Shows all of the hand's visuals.
         self.label.draw(self.win)
-        try:
-            for card in self.cards:
+        for card in self.cards:
+            try:
                 card.show()
-        except:
-            pass
+            except:
+                pass
+        pass
 
     def deactivate(self):
-        #hide the cards in the hand
-        #show a rectangle image with hand sum in the right bottom corner
-        #add this card to a to the splitHands list in Dealer class
+        #Hide the cards in the hand. Show a self.abstract
+        #add the Hand to a to the Dealer.splitHands
         self.label.undraw()
         for card in self.cards:
             card.hide()
+        self.abstract.show()
         
+    def activate(self):
+        #Hide the self.abstract and show the cards with the label
+        #Remove the hand from Dealer.splitHands
+        self.abstract.hide()
+        self.show()
+        
+    def makeAbstract(self, x): #initializes self.abstract
+        self.abstract = Abstract(self.win, x, self.sum)
+
     def draw(self, card):
-        #adds the specific card to the hand
+        #add the specific card to the hand
         #update the sum
         self.cards.append(card)
         card.moveCard(self.cardX,self.cardY)
@@ -61,7 +74,7 @@ class Hand():
 
         self.updateText()
 
-    def flipAce(self): #True if ace was flipped. False if no available aces
+    def __flipAce__(self): #True if ace was flipped. False if no available aces
         for card in self.cards:
             if card.isAce:
                 if card.value == 11:
@@ -70,12 +83,14 @@ class Hand():
                     return True
         return False
 
-    def checkStatus(self): #Return 0 if less then 21 significant. Return 1 if sum == 21. Return 2 if sum > 21 (bust)
+    def checkStatus(self): #Return 0 if Nothing Significant. Return 1 if BlackJack. Return 2 if Bust
         if(self.sum == 21):
             return 1
         elif(self.sum > 21):
-            if self.flipAce():
+            if self.__flipAce__():
                 self.checkStatus()
             else:
                 return 2
         return 0
+
+
