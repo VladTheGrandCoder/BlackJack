@@ -84,6 +84,7 @@ class Hand():
         return False
 
     def checkStatus(self): #Return 0 if Nothing Significant. Return 1 if BlackJack. Return 2 if Bust
+        ###PROBABLY DELETE THIS METHOD. ALL THE CALCULATIONS ARE DONE IN Dealer.readAction()
         if(self.sum == 21):
             return 1
         elif(self.sum > 21):

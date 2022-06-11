@@ -7,7 +7,7 @@ class Bank:
 
         self.cash = cash #all of the money subtract bet
         self.bet = 0 #total value in the stack
-        self.top = cash #this variable represents the index of top chip (from 0 to 9)
+        self.top = cash #the maximum amount of money the user posessed through the game
 
         self.stack = [] #array of the chip chip objects in the center
         self.stackTracker = [] #tracks the indexes of stack (bottom to top)
@@ -15,7 +15,7 @@ class Bank:
         self.chipVals = [1, 5, 25, 50, 100, 500, 1000, 2000, 5000, 10000] #all the possible chips values 
 
 
-        self.box = 0 # will represent the bank outline after the bank is created
+        self.box = 0 ###PROBABLY DELETE # will represent the bank outline after the bank is created 
         self.betText = 0 #the bet value to the right of the stack
         self.cashText = 0 #the remaining cash on top of the box
         self.deal = 0 #deal button
@@ -23,9 +23,11 @@ class Bank:
         self.makeBank()
 
     def showBank(self):#called after the deal is over
-        #shows the chips and and deal button
+        #shows the chips and the buttons + the box
         self.cashText.draw(self.win)
         self.deal.show()
+        self.cashOut.show()
+        self.box.draw(self.win)
         #update the top after the deal is over
         self.updateTop()
         #fills and starts reading the bank
@@ -40,24 +42,24 @@ class Bank:
         for chip in self.chips:
             chip.hide()
 
-        #hide box, cash and the deal button
+        #hide box, cash and the buttons
         self.box.undraw()
         self.cashText.undraw()
         self.deal.hide()
-
+        self.cashOut.hide()
         #active the Dealer class and call DealCards() method
-
-        ##Next 2 lines are test code. Delete them later
-        ##self.win.getMouse()   
-        ##self.showBank()    
-
+ 
     def makeChip(self, value, point):#create chip object and hide it
             chip = Chip(self.win, point, 60, value)
             chip.hide()
             return chip
 
     def makeBank(self):
-
+        ##Add cashOut button
+        self.cashOut = Button(self.win,Point(90,80),55,"Cash Out","lightgreen")
+        self.cashOut.body.setWidth(1)
+        self.cashOut.label.setSize(18)
+        self.cashOut.show()
         ##Add deal button
         self.deal = Button(self.win,Point(890, 610),55,"Deal","lightgreen")
         self.deal.body.setWidth(1)
@@ -78,8 +80,9 @@ class Bank:
         p2 = Point(10, 435)
         self.box = Rectangle(p1,p2)
         self.box.setWidth(3)
-        self.box.setOutline("darkblue")
-
+        self.box.setOutline(color_rgb(54, 61, 53))
+        self.box.setFill(color_rgb(94, 115, 92))
+        self.box.draw(self.win)
         ## Fill the center stack with invisible chips of every possible value
         center = Point(450, 360) 
             ###Show bet value to the right of the stack at all times
@@ -128,6 +131,7 @@ class Bank:
         curVal = self.cash + self.bet
         if (curVal > self.top):
             self.top = curVal
+        pass
 
     def readBank(self):
         #determines what was clicked
@@ -140,7 +144,11 @@ class Bank:
             #Check the deal button
             if(self.deal.clicked(p)):
                 self.hideBank()
-                break
+                return 0
+
+            if(self.cashOut.clicked(p) or (self.cash + self.bet) < 1):
+                #show withdrawl screen with highscore and amount withdrawn
+                return 1
 
             #check every chip in the bank
             for i in range(0,10,1): 
@@ -177,3 +185,4 @@ class Bank:
                     #removing animation
                     self.fillBank()
                     break
+        pass
