@@ -1,5 +1,6 @@
 from graphics import *
 from Abstract import Abstract
+import time
 class Hand():
     def __init__(self, win, cardY, name):
         self.win = win
@@ -60,6 +61,7 @@ class Hand():
         card.show()
         if(card.open):
             self.sum += card.value
+            self.checkStatus()
         self.updateText()
 
     def openCard(self): #opens hidden card. Only called once
@@ -67,6 +69,7 @@ class Hand():
         card.open = True
         self.sum += card.value
         card.show()
+        self.checkStatus()
                 
         for card in self.cards: #this loop stacks card on top of each other so they overlap properly
             card.hide()
@@ -76,15 +79,13 @@ class Hand():
 
     def __flipAce__(self): #True if ace was flipped. False if no available aces
         for card in self.cards:
-            if card.isAce:
-                if card.value == 11:
-                    card.value = 1
-                    self.sum -= 10
-                    return True
+             if card.value == 11:
+                 card.value = 1
+                 self.sum -= 10
+                 return True
         return False
 
-    def checkStatus(self): #Return 0 if Nothing Significant. Return 1 if BlackJack. Return 2 if Bust
-        ###PROBABLY DELETE THIS METHOD. ALL THE CALCULATIONS ARE DONE IN Dealer.readAction()
+    def checkStatus(self): #Responsible for ace controll. I need to fix the return statements
         if(self.sum == 21):
             return 1
         elif(self.sum > 21):
@@ -94,4 +95,12 @@ class Hand():
                 return 2
         return 0
 
+    def hideVisuals(self):
+        for card in self.cards:
+            card.hide()
+        self.label.undraw()
+        try:
+            self.abstract.hide()
+        except:
+            pass
 

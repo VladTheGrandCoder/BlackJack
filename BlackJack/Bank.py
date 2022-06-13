@@ -30,9 +30,8 @@ class Bank:
         self.box.draw(self.win)
         #update the top after the deal is over
         self.updateTop()
-        #fills and starts reading the bank
+        #fills the bank
         self.fillBank()
-        self.readBank()
 
     def hideBank(self):#called before the deal
         #hides everything except for the stack and the bet amount
@@ -56,13 +55,13 @@ class Bank:
 
     def makeBank(self):
         ##Add cashOut button
-        self.cashOut = Button(self.win,Point(90,80),55,"Cash Out","lightgreen")
+        self.cashOut = Button(self.win,Point(80,70),45,"Cash Out","lightgreen")
         self.cashOut.body.setWidth(1)
-        self.cashOut.label.setSize(18)
+        self.cashOut.label.setSize(15)
         self.cashOut.show()
         ##Add deal button
-        self.deal = Button(self.win,Point(890, 610),55,"Deal","lightgreen")
-        self.deal.body.setWidth(1)
+        self.deal = Button(self.win,Point(890, 610),60,"Deal","lightgreen")
+        self.deal.body.setWidth(2)
         self.deal.label.setSize(27)
         self.deal.show()
         ##Show bet value beside the stack

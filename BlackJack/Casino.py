@@ -12,7 +12,7 @@ class Casino():
                 self.dealer.initialDraw()
                 self.dealer.showDeal()
             
-                status = self.dealer.readAction()
+                status = self.dealer.readAction() #Nothing 0. Bust/loose 1. Push 2. Win 3. BJ 4.
 
                 if(status == 1):
                     #Bust. Subtract bet from cash

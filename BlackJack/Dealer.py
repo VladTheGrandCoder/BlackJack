@@ -12,6 +12,9 @@ class Dealer():
         self.deck = [] #array of all possible card objects
         self.shoe = [0] *432 #8 sets of numbers from 0 to 51 representing a card indexes in the deck
                         #(every number is an index of a specific card in self.deck)
+        self.shoeText = Text(Point(910,70), "{0}❏".format(len(self.shoe)))
+        self.shoeText.setFill("white")
+        self.shoeText.setSize(19)
 
         self.NumDrawn = 0 #reshuffle when this reaches 180
 
@@ -54,7 +57,6 @@ class Dealer():
         pass
         #fills self.deck with appropriate card objects
 
-        
     def __makeCard__(self, index, image, value):
         card = Card(index, image, value, self.win)
         return card#creates a card object
@@ -76,14 +78,18 @@ class Dealer():
                     index = self.__makeIndex__(takenIndexes)
                     takenIndexes.append(index)
                     self.shoe[index] = j
+        #fills the shoe with random indexes of 8 decks
 
-        pass #fills the shoe with random indexes of 8 decks
+    def updateShoeText(self):
+        cardsLeft = len(self.shoe) - self.NumDrawn
+        self.shoeText.setText("{0}❏".format(cardsLeft))
 
     def showDeal(self):
         #shows all the buttons that are available in the deal mode
         #check if numDrawn is greater then 180. If yes, shuffle and set numdrawn to 0
         self.standButton.show()
         self.hitButton.show()
+        self.shoeText.draw(self.win)
 
         self.playerHand.show()
         self.dealerHand.show()
@@ -95,18 +101,19 @@ class Dealer():
 
         self.playerHand.label.undraw() #Hide the labels
         self.dealerHand.label.undraw()
+        self.shoeText.undraw()
 
-        for card in self.playerHand.cards:
-            card.hide()
-            del card
+        self.playerHand.hideVisuals() #Hide and emptry player's cards
+        del self.playerHand.cards[:]
 
-        for card in self.dealerHand.cards:
-            card.hide()
-            del card
+        self.dealerHand.hideVisuals() #Hide and empty dealer's cards
+        del self.dealerHand.cards[:]
 
-        for i in range(len(self.splitHands) - 1): #empty split hands list
-            #make sure to properly undraw everything before deleting
-            del self.splitHands[i]
+        for hand in self.splitHands: #Get rid of all the splits
+            hand.hideVisuals()
+        del self.splitHands[:]
+
+
 
         self.hitButton.hide() #Hide all the buttons
         self.standButton.hide()
@@ -117,12 +124,17 @@ class Dealer():
     def __drawCard__(self):
         self.NumDrawn += 1
         card = self.deck[self.shoe[-1-self.NumDrawn]].clone()
+        self.updateShoeText()
         return card
         #Draws card from the deck. Returns the card drawn
 
     def initialDraw(self):
-
-
+        #Make sure that the sums are zero and that the cards are properly lined up 
+        self.playerHand.sum = 0
+        self.playerHand.cardX = 400
+        self.dealerHand.sum = 0
+        self.dealerHand.cardX = 400
+        #Start drawing cards
         card1 = self.__drawCard__()
         self.playerHand.draw(card1)
         
@@ -138,8 +150,6 @@ class Dealer():
 
     def readAction(self):        #reads buttons and check hand values
         while(True):
-            p = self.win.getMouse()
-
             if(self.playerHand.sum == 21):#Check for BJ
                 self.dealerHand.openCard()
                 time.sleep(1.5)
@@ -156,17 +166,15 @@ class Dealer():
                 time.sleep(1.5)
                 return 1
 
+            p = self.win.getMouse() #Read input
+
             if(self.hitButton.clicked(p)): #Check hit button
                 card = self.__drawCard__()
                 self.playerHand.draw(card)
-                #Check status after a hit
-                if(self.playerHand.sum > 21):#Check bust
-                    self.dealerHand.openCard() #Show dealer's card, wait and return bust 
-                    time.sleep(1.5)
-                    return 1
 
             elif(self.standButton.clicked(p)): #Check stand button
                 self.dealerHand.openCard()
+                time.sleep(1.5)
                 self.dealerDraw()
 
                 d = self.dealerHand.sum
@@ -190,6 +198,7 @@ class Dealer():
             if(self.dealerHand.sum < 17):
                 card = self.__drawCard__()
                 self.dealerHand.draw(card)
+                self.dealerHand.checkStatus()
                 time.sleep(1.5)
             else:
                 break
