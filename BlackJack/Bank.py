@@ -33,6 +33,7 @@ class Bank:
         #fills the bank
         self.fillBank()
 
+
     def hideBank(self):#called before the deal
         #hides everything except for the stack and the bet amount
         #called when the readBank loop breaks
@@ -125,7 +126,7 @@ class Bank:
         for chip in self.chips:
             if(chip.value <= self.cash):
                 chip.show()
-
+        pass
     def updateTop(self):
         curVal = self.cash + self.bet
         if (curVal > self.top):
@@ -141,7 +142,7 @@ class Bank:
             p = self.win.getMouse()
 
             #Check the deal button
-            if(self.deal.clicked(p)):
+            if(self.deal.clicked(p) and self.bet > 0):
                 self.hideBank()
                 return 0
 

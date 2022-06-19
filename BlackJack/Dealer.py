@@ -16,7 +16,8 @@ class Dealer():
         self.shoeText.setFill("white")
         self.shoeText.setSize(19)
 
-        self.NumDrawn = 0 #reshuffle when this reaches 180
+        self.NumDrawn = 0 #reshuffle when this reaches self.marker (Reshuffles in self.showDeal)
+        self.marker = random.randint(172,260) #random number between 40% and 60% of 432
 
         self.playerHand = Hand(self.win, 550, "Player")
         self.dealerHand = Hand(self.win, 170, "Dealer")
@@ -86,7 +87,13 @@ class Dealer():
 
     def showDeal(self):
         #shows all the buttons that are available in the deal mode
-        #check if numDrawn is greater then 180. If yes, shuffle and set numdrawn to 0
+        #check if reached the marker. If yes, shuffle and set numdrawn to 0
+        if(432 - self.NumDrawn < self.marker):
+            self.shuffle()
+            self.NumDrawn = 0
+            self.marker = random.randint(172,260)
+            self.updateShoeText()
+
         self.standButton.show()
         self.hitButton.show()
         self.shoeText.draw(self.win)
@@ -156,7 +163,7 @@ class Dealer():
                 if(self.playerHand.sum == self.dealerHand.sum): #CheckFor Push
                     return 2
                 else:
-                    if(len(self.dealerHand.cards) == 2): #Check if it is a 2 card BJ
+                    if(len(self.playerHand.cards) == 2): #Check if it is a 2 card BJ
                         return 4
                     else: 
                         return 3 #if not a 2 card BJ, return regular win (victory, not window)
