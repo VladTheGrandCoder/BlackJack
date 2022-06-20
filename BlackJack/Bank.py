@@ -22,6 +22,10 @@ class Bank:
 
         self.makeBank()
 
+    def updateBet(self, newBet):
+        self.bet = int(newBet)
+        self.betText.setText("${0}".format(self.bet))
+
     def showBank(self):#called after the deal is over
         #shows the chips and the buttons + the box
         self.cashText.draw(self.win)

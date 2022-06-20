@@ -10,7 +10,7 @@ def main():
     win.setBackground("green")
     
     bank = Bank(win, 1000)
-    dealer = Dealer(win, 1020)
+    dealer = Dealer(win, bank)
     casino = Casino(win, bank, dealer)
     casino.play()
 

@@ -6,8 +6,9 @@ from Card import Card
 from Hand import Hand
 from Button import Button
 class Dealer():
-    def __init__(self, win, userCash):
+    def __init__(self, win, bank):
         self.win = win
+        self.bank = bank
 
         self.deck = [] #array of all possible card objects
         self.shoe = [0] *432 #8 sets of numbers from 0 to 51 representing a card indexes in the deck
@@ -26,9 +27,19 @@ class Dealer():
 
         self.standButton = Button(win,Point(710,360),60,"Stand","lightgreen")
         self.hitButton = Button(win, Point(300,360),60,"Hit","lightgreen")
-        self.doubleButton = 0
-        self.splitButton = 0
-        self.insuraceButton = 0
+        self.doubleButton = Button(win, Point(170, 360), 55,"X2", "lightgreen")
+        self.doubleButton.label.setSize(27)
+        self.splitButton = Button(win, Point(840, 360), 55, "Split", "lightgreen")
+        self.splitButton.label.setSize(27)
+        self.insuraceButton = Button(win, Point(80, 70), 45, "Insurance", "lightgreen")
+        self.insuraceButton.label.setSize(15)
+        self.insuraceButton.body.setWidth(1)
+
+
+
+        self.cashText = Text(Point(112, 690),"Cash: ${0:6<}".format(self.bank.cash))
+        self.cashText.setTextColor("white")
+        self.cashText.setSize(25)
 
         self.abstractX = 700
 
@@ -36,6 +47,10 @@ class Dealer():
         self.shuffle()
 
 
+    def updateCashText(self):
+        self.cashText.setText("Cash: ${0:6<}".format(self.bank.cash))
+    def updateCashTest(self, newCash):
+        self.cashText.setText("Cash: ${0:6<}".format(newCash))
 
     def fillDeck(self):
         i = 1
@@ -96,7 +111,13 @@ class Dealer():
 
         self.standButton.show()
         self.hitButton.show()
+        #self.doubleButton.show() #Delete later
+        #self.splitButton.show() #Delete later
+        #self.insuraceButton.show() #Delete later
+
+        self.updateCashText()
         self.shoeText.draw(self.win)
+        self.cashText.draw(self.win)
 
         self.playerHand.show()
         self.dealerHand.show()
@@ -109,6 +130,7 @@ class Dealer():
         self.playerHand.label.undraw() #Hide the labels
         self.dealerHand.label.undraw()
         self.shoeText.undraw()
+        self.cashText.undraw()
 
         self.playerHand.hideVisuals() #Hide and emptry player's cards
         del self.playerHand.cards[:]
@@ -124,9 +146,9 @@ class Dealer():
 
         self.hitButton.hide() #Hide all the buttons
         self.standButton.hide()
-        #self.doubleButton.hide()
-        #self.splitButton.hide()
-        #self.insuraceButton.hide()
+        self.doubleButton.hide()
+        self.splitButton.hide()
+        self.insuraceButton.hide()
 
     def __drawCard__(self):
         self.NumDrawn += 1
@@ -155,31 +177,53 @@ class Dealer():
         card4 = self.__drawCard__()
         self.dealerHand.draw(card4)
 
-    def readAction(self):        #reads buttons and check hand values
+    def readGame(self, hasMoneyForDouble):
+        pass
+
+    def readAction(self, hasMoneyForDouble):        #reads buttons and check hand values
         while(True):
             if(self.playerHand.sum == 21):#Check for BJ
                 self.dealerHand.openCard()
                 time.sleep(1.5)
-                if(self.playerHand.sum == self.dealerHand.sum): #CheckFor Push
+                if(self.playerHand.sum == self.dealerHand.sum): #Check for Push
                     return 2
                 else:
                     if(len(self.playerHand.cards) == 2): #Check if it is a 2 card BJ
                         return 4
                     else: 
-                        return 3 #if not a 2 card BJ, return regular win (victory, not window)
+                        self.dealerDraw()
+                        if(self.dealerHand.sum == 21): #Check for Push
+                            return 2
+                        else:
+                            return 3 #if not a 2 card BJ, return regular win (victory, not window)
 
             elif(self.playerHand.sum > 21):#Check bust
                 self.dealerHand.openCard() #Show dealer's card, wait and return bust 
                 time.sleep(1.5)
                 return 1
 
+            ###Check if can show the optional buttons
+            if(len(self.playerHand.cards) == 2 ): #Check for split option
+                if(self.playerHand.cards[0].value == self.playerHand.cards[1].value):
+                    self.splitButton.show()
+            if(hasMoneyForDouble and len(self.playerHand.cards) == 2): #Check for double option
+                self.doubleButton.show()
+            if(self.dealerHand.cards[1].value == 11 and hasMoneyForDouble and len(self.playerHand.cards) == 2):  #Check for insurance option
+                self.insuraceButton.show()
+
             p = self.win.getMouse() #Read input
 
             if(self.hitButton.clicked(p)): #Check hit button
-                card = self.__drawCard__()
+                card = self.__drawCard__() #Draw a card and hide x2 button and insurance button
                 self.playerHand.draw(card)
 
+                self.doubleButton.hide()
+                self.insuraceButton.hide()
+
             elif(self.standButton.clicked(p)): #Check stand button
+                self.doubleButton.hide()
+                self.insuraceButton.hide()
+
                 self.dealerHand.openCard()
                 time.sleep(1.5)
                 self.dealerDraw()
@@ -196,9 +240,66 @@ class Dealer():
                 elif(d > p): #Check for player loose (dont check for bust, because that was done at the start)
                     time.sleep(1.5)
                     return 1
-                print("Oops! reacAction standButton command is broken!")
                 break
-        pass
+            
+            elif(self.doubleButton.clicked(p)): #Check the Double button
+                self.doubleButton.hide()
+                self.insuraceButton.hide()
+                self.updateCashTest(self.bank.cash - self.bank.bet) #Update cash considering the new Bet
+
+                self.bank.updateBet(self.bank.bet * 2)
+                
+
+                card = self.__drawCard__() #Draw one card  
+                self.playerHand.draw(card)
+
+                if(self.playerHand.sum > 21): #Check for bust after drawing card
+                    time.sleep(1.5)
+                    self.dealerHand.openCard()
+                    time.sleep(1.5)
+                    return 21
+
+                time.sleep(1.5)
+                self.dealerHand.openCard() #Draw the dealer's cards
+                time.sleep(1.5)
+                self.dealerDraw()
+                #Check the outcome
+                d = self.dealerHand.sum
+                p = self.playerHand.sum
+
+                if(d > p and d < 22 or p > 21): #Check for player loose
+                    time.sleep(1.5)
+                    return 21
+                elif(d == p):#Check for push
+                    time.sleep(1.5)
+                    return 2
+                elif(d > 21 or d < p): #Check for dealer bust and dealer loose
+                    time.sleep(1.5)
+                    return 23
+                pass
+
+            elif(self.insuraceButton.clicked(p)): #Check insurance button
+                #side bet equal to the original
+                #check for BlackJack in the dealer
+                #if BJ pay the insarance to the user, compare cards and return
+                #else Subtract the insurance from cash
+                self.insuraceButton.hide()
+                sideBet = self.bank.bet
+                sum = 0
+                for card in self.dealerHand.cards:
+                    sum += card.value
+                if(sum == 21): 
+                    self.dealerHand.openCard()
+                    self.bank.cash += sideBet
+                    time.sleep(1.5)
+                    return 1    #Return loose, because if the user had 21, it would have triggered above
+                else:
+                    self.bank.cash -= sideBet
+                    self.updateCashText()
+                pass
+
+            elif(self.splitButton.clicled(p)):
+                pass
 
     def dealerDraw(self):
         while(True):
@@ -212,11 +313,8 @@ class Dealer():
         pass
         #keep drawing cards until self.dealerHand.sum >= 17
 
-    def hit():
-        pass
-
     def stand(self):
-
+        ##Trash it
         for i in range(len(self.splitHands)): #Checks for unplayed hands in the split
             hand = self.splitHands[i]
             if (not hand.abstract.played): #If the Hand has not been played, play if
@@ -229,20 +327,12 @@ class Dealer():
                 #self.readAction() Idk what is the best way to get back to reading the action and break from here at the same time
                 #Got to figure it out next time
 
-
-    def doubleUp():
-        pass
-
     def split(self):
+        ##Probabl Trash It
         #make a new hand. Add one of the playerHand cards to the hand. Delete that card from playerHand.
         #add the new hand to the self.splitHands
         card = self.playerHand.cards[1].clone()
 
         splitHands.append(Hand(self.win))
 
-        del self.playerHand.cards[1]
-
-
-    def insurace():
-        pass
-    
+        del self.playerHand.cards[1] 
