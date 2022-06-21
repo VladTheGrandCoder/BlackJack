@@ -26,30 +26,35 @@ class Dealer():
         self.splitHands = [] #list of split hands that are not being played at the moment
 
         self.standButton = Button(win,Point(710,360),60,"Stand","lightgreen")
+
         self.hitButton = Button(win, Point(300,360),60,"Hit","lightgreen")
+
         self.doubleButton = Button(win, Point(170, 360), 55,"X2", "lightgreen")
         self.doubleButton.label.setSize(27)
+
         self.splitButton = Button(win, Point(840, 360), 55, "Split", "lightgreen")
         self.splitButton.label.setSize(27)
+
         self.insuraceButton = Button(win, Point(80, 70), 45, "Insurance", "lightgreen")
         self.insuraceButton.label.setSize(15)
         self.insuraceButton.body.setWidth(1)
 
-
+        self.insuranceText = Text(Point(150, 160), "")
+        self.insuranceText.setTextColor("white")
+        self.insuranceText.setSize(21)
 
         self.cashText = Text(Point(112, 690),"Cash: ${0:6<}".format(self.bank.cash))
         self.cashText.setTextColor("white")
         self.cashText.setSize(25)
 
-        self.abstractX = 700
+        self.abstractX = 700 #Trash it
 
         self.fillDeck()
         self.shuffle()
 
-
-    def updateCashText(self):
+    def updateCashText(self): 
         self.cashText.setText("Cash: ${0:6<}".format(self.bank.cash))
-    def updateCashTest(self, newCash):
+    def updateCashTest(self, newCash):#wanted this to be an overload, but gave it a different name. Keep it like that, works just fine
         self.cashText.setText("Cash: ${0:6<}".format(newCash))
 
     def fillDeck(self):
@@ -216,10 +221,11 @@ class Dealer():
 
                 self.doubleButton.hide()
                 self.insuraceButton.hide()
-
+                self.splitButton.hide()
             elif(self.standButton.clicked(p)): #Check stand button
                 self.doubleButton.hide()
                 self.insuraceButton.hide()
+                self.splitButton.hide()
 
                 self.dealerHand.openCard()
                 time.sleep(1.5)
@@ -242,6 +248,8 @@ class Dealer():
             elif(self.doubleButton.clicked(p)): #Check the Double button
                 self.doubleButton.hide()
                 self.insuraceButton.hide()
+                self.splitButton.hide()
+
                 self.updateCashTest(self.bank.cash - self.bank.bet) #Update cash considering the new Bet
 
                 self.bank.updateBet(self.bank.bet * 2)
@@ -288,11 +296,18 @@ class Dealer():
                 if(sum == 21): 
                     self.dealerHand.openCard()
                     self.bank.cash += sideBet
+                    self.insuranceText.setText("Insurance Triggered!")
+                    self.insuranceText.draw(self.win)
                     time.sleep(1.5)
+                    self.insuranceText.undraw()
                     return 1    #Return loose, because if the user had 21, it would have triggered above
                 else:
                     self.bank.cash -= sideBet
                     self.updateCashText()
+                    self.insuranceText.setText("Insurance Lost!")
+                    self.insuranceText.draw(self.win)
+                    time.sleep(1.5)
+                    self.insuranceText.undraw()
                 pass
 
             elif(self.splitButton.clicked(p)):
