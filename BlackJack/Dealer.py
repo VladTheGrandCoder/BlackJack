@@ -177,9 +177,6 @@ class Dealer():
         card4 = self.__drawCard__()
         self.dealerHand.draw(card4)
 
-    def readGame(self, hasMoneyForDouble):
-        pass
-
     def readAction(self, hasMoneyForDouble):        #reads buttons and check hand values
         while(True):
             if(self.playerHand.sum == 21):#Check for BJ
@@ -298,7 +295,7 @@ class Dealer():
                     self.updateCashText()
                 pass
 
-            elif(self.splitButton.clicled(p)):
+            elif(self.splitButton.clicked(p)):
                 pass
 
     def dealerDraw(self):
