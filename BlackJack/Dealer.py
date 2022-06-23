@@ -8,19 +8,23 @@ from Button import Button
 class Dealer():
     def __init__(self, win, bank):
         self.win = win
-        self.bank = bank
+        self.bank = bank #honestly, this shouldn't be here. Dealer should interact with the bank
+                            #through casino only. Unfortunately I had to add bank to the dealer itself,
+                            #because I need it for Dealer.cashText as well as special buttons. 
+                            #I probably should have made a whole new class responsible for cashText manipulations
+                            #during the deal phase. Or just use the cashText in the bank class itself. 
 
         self.deck = [] #array of all possible card objects
         self.shoe = [0] *432 #8 sets of numbers from 0 to 51 representing a card indexes in the deck
                         #(every number is an index of a specific card in self.deck)
-        self.shoeText = Text(Point(910,70), "{0}❏".format(len(self.shoe)))
+        self.shoeText = Text(Point(910,70), "{0}❏".format(len(self.shoe))) #number of cards left in the shoe
         self.shoeText.setFill("white")
         self.shoeText.setSize(19)
 
         self.NumDrawn = 0 #reshuffle when this reaches self.marker (Reshuffles in self.showDeal)
         self.marker = random.randint(172,260) #random number between 40% and 60% of 432
 
-        self.playerHand = Hand(self.win, 550, "Player")
+        self.playerHand = Hand(self.win, 550, "Player") #Initialize the 2 hands
         self.dealerHand = Hand(self.win, 170, "Dealer")
 
         self.splitHands = [] #list of split hands that are not being played at the moment
@@ -43,21 +47,21 @@ class Dealer():
         self.insuranceText.setTextColor("white")
         self.insuranceText.setSize(21)
 
-        self.cashText = Text(Point(112, 690),"Cash: ${0:6<}".format(self.bank.cash))
+        self.cashText = Text(Point(112, 690),"Cash: ${0:6<}".format(self.bank.cash)) #how much cash the user has
         self.cashText.setTextColor("white")
         self.cashText.setSize(25)
 
-        self.abstractX = 700 #Trash it
+        self.abstractX = 700 #used for splits. The x value of where the next split abstract should be displayed
 
-        self.fillDeck()
+        self.fillDeck() #fill deck and shuffle shoe when initializing a Dealer object
         self.shuffle()
 
-    def updateCashText(self): 
+    def updateCashText(self):
         self.cashText.setText("Cash: ${0:6<}".format(self.bank.cash))
-    def updateCashTest(self, newCash):#wanted this to be an overload, but gave it a different name. Keep it like that, works just fine
+    def updateCashTest(self, newCash):#wanted this to be an overload, but gave it a different name. Keep it like that, works just fine. (I tried giving it the same name and the program broke)
         self.cashText.setText("Cash: ${0:6<}".format(newCash))
 
-    def testShuffle(self): ###Used for testing special cases
+    def testShuffle(self): ###Used for testing special cases (debugging only)
         c = 0
         for i in range(72):
                 self.shoe[c] = 12
@@ -73,51 +77,47 @@ class Dealer():
                 self.shoe[c] = 11
                 c += 1
 
-    def fillDeck(self):
+    def fillDeck(self): #fills self.deck with appropriate card objects
         i = 1
         val = 2
-        for suit in ["clubs", "diamonds", "hearts", "spades"]:
+        #the two loops denerate a string that is used to find the appropriate image in the Cards folder
+        for suit in ["clubs", "diamonds", "hearts", "spades"]: 
             val = 2
             for face in ['2','3','4','5','6','7','8','9','10','jack','queen','king','ace']:
-                path = "Cards\{0}_of_{1}.png".format(face, suit)
-                card = self.__makeCard__(i, path, val)
-                if i%13 == 0:
-
-                    card.isAce = True
+                path = "Cards\{0}_of_{1}.png".format(face, suit) #create the appropriate path string
+                card = self.__makeCard__(i, path, val) #make the actual card object
+                if i%13 == 0: #if card is multiple of 13, its an ace. Set its value to 11
                     card.value = 11
                     
-                self.deck.append(card)
-
+                self.deck.append(card) #add card to the deck
                 i+=1
-                if val < 10:
+                if val < 10: #increase value of each card up until it reaches 10 (10, Jack, Queen, King are all worth 10)
                    val +=1
         pass
-        #fills self.deck with appropriate card objects
 
     def __makeCard__(self, index, image, value):
         card = Card(index, image, value, self.win)
         return card#creates a card object
 
-    def __makeIndex__(self, takenIndexes):
+    def __makeIndex__(self, takenIndexes):#used to avoid index doubling when shuffling
         index = random.randint(0,431)
         if not (index in takenIndexes):
                     takenIndexes.append(index)
                     return index
         else:
-            return self.__makeIndex__(takenIndexes) #used to avoid index doubling when shuffling
+            return self.__makeIndex__(takenIndexes) 
 
-    def shuffle(self):
+    def shuffle(self): #fills the shoe with random indexes of 8 decks
         takenIndexes = []
 
         for i in range(8):
             for j in range(0,52,1):
-                
                     index = self.__makeIndex__(takenIndexes)
                     takenIndexes.append(index)
                     self.shoe[index] = j
-        #fills the shoe with random indexes of 8 decks
+        pass
 
-    def updateShoeText(self):
+    def updateShoeText(self): 
         cardsLeft = len(self.shoe) - self.NumDrawn
         self.shoeText.setText("{0}❏".format(cardsLeft))
 
@@ -132,9 +132,6 @@ class Dealer():
 
         self.standButton.show()
         self.hitButton.show()
-        #self.doubleButton.show() #Delete later
-        #self.splitButton.show() #Delete later
-        #self.insuraceButton.show() #Delete later
 
         self.updateCashText()
         self.shoeText.draw(self.win)
@@ -163,8 +160,6 @@ class Dealer():
             hand.hideVisuals()
         del self.splitHands[:]
 
-
-
         self.hitButton.hide() #Hide all the buttons
         self.standButton.hide()
         self.doubleButton.hide()
@@ -172,12 +167,12 @@ class Dealer():
         self.insuraceButton.hide()
 
     def __drawCard__(self):
+        #Draws card from the deck. Returns the card drawn
         self.NumDrawn += 1
         card = self.deck[self.shoe[-1-self.NumDrawn]].clone()
         self.updateShoeText()
         return card
-        #Draws card from the deck. Returns the card drawn
-
+        
     def initialDraw(self):
         #Make sure that the sums are zero and that the cards are properly lined up 
         self.playerHand.sum = 0
@@ -185,20 +180,20 @@ class Dealer():
         self.dealerHand.sum = 0
         self.dealerHand.cardX = 400
         #Start drawing cards
-        card1 = self.__drawCard__()
-        self.playerHand.draw(card1)
+        card1 = self.__drawCard__() 
+        self.playerHand.draw(card1) #player draw 1
         
-        card2 = self.__drawCard__()
-        card2.open = False
-        self.dealerHand.draw(card2) #hidden card
+        card2 = self.__drawCard__() 
+        card2.open = False          #hidden card
+        self.dealerHand.draw(card2) #dealer draw 1
 
-        card3 = self.__drawCard__()
-        self.playerHand.draw(card3)
+        card3 = self.__drawCard__() 
+        self.playerHand.draw(card3) #player draw  2
 
         card4 = self.__drawCard__()
-        self.dealerHand.draw(card4)
+        self.dealerHand.draw(card4) #dealer draw 2
 
-        ###Check if can show the optional buttons
+        #Check if can show the optional buttons
         if(len(self.playerHand.cards) == 2 ): #Check for split option
             if(self.playerHand.cards[0].value == self.playerHand.cards[1].value):
                 self.splitButton.show()
@@ -206,8 +201,9 @@ class Dealer():
             self.doubleButton.show()
         if(self.dealerHand.cards[1].value == 11 and self.bank.cash >= self.bank.bet and len(self.playerHand.cards) == 2):  #Check for insurance option
             self.insuraceButton.show()
+        pass
 
-    def readAction(self, hasMoneyForDouble):        #reads buttons and check hand values
+    def readAction(self):        #reads buttons and check hand values
         while(True):
             if(self.playerHand.sum == 21):#Check for BJ
                 self.dealerHand.openCard()
@@ -229,16 +225,16 @@ class Dealer():
                 time.sleep(1.5)
                 return 1
 
-
             p = self.win.getMouse() #Read input
 
             if(self.hitButton.clicked(p)): #Check hit button
-                card = self.__drawCard__() #Draw a card and hide x2 button and insurance button
+                card = self.__drawCard__() #Draw a card
                 self.playerHand.draw(card)
 
-                self.doubleButton.hide()
+                self.doubleButton.hide() #Hide the special buttons
                 self.insuraceButton.hide()
                 self.splitButton.hide()
+
             elif(self.standButton.clicked(p)): #Check stand button
                 self.doubleButton.hide()
                 self.insuraceButton.hide()
@@ -303,8 +299,8 @@ class Dealer():
             elif(self.insuraceButton.clicked(p)): #Check insurance button
                 #side bet equal to the original
                 #check for BlackJack in the dealer
-                #if BJ pay the insarance to the user, compare cards and return
-                #else Subtract the insurance from cash
+                #if BJ pay the insarance to the user and return player loose
+                #else Subtract the insurance from cash and keep playing
                 self.insuraceButton.hide()
                 sideBet = self.bank.bet
                 sum = 0
@@ -329,9 +325,11 @@ class Dealer():
                 pass
 
             elif(self.splitButton.clicked(p)):
+                # :(
                 pass
             pass
     def dealerDraw(self):
+        #keep drawing cards until self.dealerHand.sum >= 17
         while(True):
             if(self.dealerHand.sum < 17):
                 card = self.__drawCard__()
@@ -341,13 +339,13 @@ class Dealer():
             else:
                 break
         pass
-        #keep drawing cards until self.dealerHand.sum >= 17
-
+        
     def stand(self):
-        ##Trash it
+        #Never ended up using it. 
+        #I will keep it in the project, because it might help me implement splits in the future
         for i in range(len(self.splitHands)): #Checks for unplayed hands in the split
             hand = self.splitHands[i]
-            if (not hand.abstract.played): #If the Hand has not been played, play if
+            if (not hand.abstract.played): #If the Hand has not been played, play it
                 self.playerHand.makeAbstract(self.abstractX)
                 self.playerHand.abstract.show()
                 self.splitHands[i] = self.playerHand
@@ -356,9 +354,10 @@ class Dealer():
                 self.playerHand.show()
                 #self.readAction() Idk what is the best way to get back to reading the action and break from here at the same time
                 #Got to figure it out next time
+        pass
 
     def split(self):
-        ##Probabl Trash It
+        #Never used it. Keep in case I need it in the future. 
         #make a new hand. Add one of the playerHand cards to the hand. Delete that card from playerHand.
         #add the new hand to the self.splitHands
         card = self.playerHand.cards[1].clone()

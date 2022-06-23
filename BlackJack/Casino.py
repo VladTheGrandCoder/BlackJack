@@ -16,7 +16,7 @@ class Casino():
             self.endRect.setFill("green")
             self.endRect.setOutline("green")
 
-    def endScreen(self,text):
+    def endScreen(self,text): #This will apear when the deal is over and show text depending on the outcome of the deal
         self.endText.setText(text)
         self.endRect.draw(self.win)
         self.endText.draw(self.win)
@@ -24,7 +24,7 @@ class Casino():
         self.endRect.undraw()
         self.endText.undraw()
 
-    def cashOutScreen(self):
+    def cashOutScreen(self): #called when the user cashed out or lost all money
         rect = Rectangle(Point(200, 100), Point(800, 620))
         rect.setFill("lightblue")
         rect.setOutline("lightblue")
@@ -67,16 +67,9 @@ class Casino():
                 self.dealer.showDeal()
                 self.dealer.initialDraw()
 
-                hasMoneyForDouble = False
-                if(self.bank.cash >= self.bank.bet):
-                    hasMoneyForDouble = True
                 #Nothing 0. Bust/loose 1. Push 2. Win 3. BJ 4. X2Loose 21. X2Win 23. 
-                status = self.dealer.readAction(hasMoneyForDouble)  
+                status = self.dealer.readAction()  
                     
-                #go through array of different games
-                #for every game show the hand for 1.5s and then show the outcome
-                #status = games[i]
-                #playedHands[i].activate()
                 if(status == 1):
                     #Bust. Subtract bet from cash
                     if(self.bank.cash - self.bank.bet >= 0): #Make sure cash does not go negative

@@ -22,7 +22,7 @@ class Bank:
 
         self.makeBank()
 
-    def updateBet(self, newBet):
+    def updateBet(self, newBet): #Updates self.bet and self.betText
         self.bet = int(newBet)
         self.betText.setText("${0}".format(self.bet))
 
@@ -36,7 +36,6 @@ class Bank:
         self.updateTop()
         #fills the bank
         self.fillBank()
-
 
     def hideBank(self):#called before the deal
         #hides everything except for the stack and the bet amount
@@ -53,7 +52,7 @@ class Bank:
         self.cashOut.hide()
         #active the Dealer class and call DealCards() method
  
-    def makeChip(self, value, point):#create chip object and hide it
+    def makeChip(self, value, point):#create a chip object and hide it
             chip = Chip(self.win, point, 60, value)
             chip.hide()
             return chip
@@ -93,7 +92,6 @@ class Bank:
         for i in range(0,10,1):
             value = self.chipVals[i]
             chip = self.makeChip(value, center)
-            chip.bet = True #used in readBank for differentiating the kind of chip clicked
             self.stack.append(chip)
 
         #Fill the bank with chip of every possible value and hide them
@@ -131,7 +129,9 @@ class Bank:
             if(chip.value <= self.cash):
                 chip.show()
         pass
-    def updateTop(self):
+
+    def updateTop(self): #updates the self.top 
+        #Called after every deal to check if new top has been achieved
         curVal = self.cash + self.bet
         if (curVal > self.top):
             self.top = curVal
@@ -140,8 +140,6 @@ class Bank:
     def readBank(self):
         #determines what was clicked
         #keep reading until the user decides to deal cards
-        ###ADD a button that would allow to finish the game by withdrawling cash
-        ###CHECK if the user has any money left. End game if no
         while(True):
             p = self.win.getMouse()
 
@@ -149,7 +147,7 @@ class Bank:
             if(self.deal.clicked(p) and self.bet > 0):
                 self.hideBank()
                 return 0
-
+            #Check if user wants to checkout or if user ran out of cash. 
             if(self.cashOut.clicked(p) or (self.cash + self.bet) < 1):
                 #show withdrawl screen with highscore and amount withdrawn
                 return 1
@@ -168,14 +166,14 @@ class Bank:
                         pass
                     self.stackTracker.append(i) #add the new chip index
                     self.stack[i].show() #show the new chip
-                    #adding animation
-                    self.fillBank()
+                    #add animation
+                    self.fillBank() #update bank considering new cash value
                     break
 
             #check every chip in the stack
             for i in range(0,10,1):
                 chip = self.stack[i]
-                if(chip.clicked(p) and chip.visible):
+                if(chip.clicked(p) and chip.visible): #if chip in the stack was clicked, remove it from the bet
                     v = chip.value
                     self.cash += v
                     self.bet -= v

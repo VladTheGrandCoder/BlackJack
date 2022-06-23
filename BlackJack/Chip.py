@@ -6,12 +6,8 @@ class Chip(Button):
         #Creates a chip that has all the parameters of a button
         super().__init__(win, center, radius, value, "black")
 
-        self.label.setText(value)
-
         value = int(value)
         self.value = value
-        self.bet = False #used in readChip (future readBank method for differenting what was clicked)
-
         self.paint(value)
 
     def paint(self, v):
@@ -25,7 +21,8 @@ class Chip(Button):
                 break
 
     def moveChip(self, initialPoint, finalPoint):
+        #animation
         #make a clone
         #show it move
         #delete the clone
-        print()
+        pass

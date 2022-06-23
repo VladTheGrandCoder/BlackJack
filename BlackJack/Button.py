@@ -1,7 +1,7 @@
 from graphics import *
 import math
 
-class Button:
+class Button: #Circular button
     def __init__(self, win, center, radius, label, colour):
         self.x = center.getX()
         self.y = center.getY()

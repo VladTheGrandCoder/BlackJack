@@ -12,21 +12,20 @@ class Hand():
         self.cardX = 400        #Coordinates of the cards in the hand
         self.cardY = cardY
 
-        self.label = {}         #The next 3 lines generate the label or "player name" and the hand's score
-        self.name = name
+        self.name = name        #generate the label or "player name" with the hand's score
         self.makeLabel()
 
-        self.abstract = 0      #The rectangle with a number in the bottom right corner. Used to keep track of splits
+        self.abstract = {}      #The rectangle with a number in the bottom right corner. Used to keep track of splits
 
     def makeLabel(self):        #Creates a lable Text object which shows Hand.name and Hand.sum
         self.label = Text(Point(self.cardX + 400, self.cardY), "{0} {1}".format(self.sum, self.name))
         self.label.setSize(25)
         self.label.setFill("white")
 
-    def updateText(self):       #Updates the sum value when a card is added/removed from the hand
+    def updateText(self):       #Updates the sum value in the label when a card is added/removed from the hand
         self.label.setText("{0} {1}".format(self.sum, self.name))
 
-    def show(self):     #Shows all of the hand's visuals.
+    def show(self):     #Shows all of the hand's visuals. (Used in dealer.showDeal())
         self.label.draw(self.win)
         for card in self.cards:
             try:
@@ -35,26 +34,10 @@ class Hand():
                 pass
         pass
 
-    def deactivate(self):
-        #Hide the cards in the hand. Show a self.abstract
-        #add the Hand to a to the Dealer.splitHands
-        self.label.undraw()
-        for card in self.cards:
-            card.hide()
-        self.abstract.show()
-        
-    def activate(self):
-        #Hide the self.abstract and show the cards with the label
-        #Remove the hand from Dealer.splitHands
-        self.abstract.hide()
-        self.show()
-        
-    def makeAbstract(self, x): #initializes self.abstract
-        self.abstract = Abstract(self.win, x, self.sum)
-
     def draw(self, card):
         #add the specific card to the hand
-        #update the sum
+        #update the sum and text
+        #show the card
         self.cards.append(card)
         card.moveCard(self.cardX,self.cardY)
         self.cardX += 40
@@ -85,17 +68,12 @@ class Hand():
                  return True
         return False
 
-    def checkStatus(self): #Responsible for ace controll. I need to fix the return statements
-        if(self.sum == 21):
-            return 1
-        elif(self.sum > 21):
+    def checkStatus(self): #Responsible for Ace controll.
+        if(self.sum > 21):
             if self.__flipAce__():
                 self.checkStatus()
-            else:
-                return 2
-        return 0
 
-    def hideVisuals(self):
+    def hideVisuals(self): #used for splits
         for card in self.cards:
             card.hide()
         self.label.undraw()
@@ -104,3 +82,19 @@ class Hand():
         except:
             pass
 
+    def deactivate(self): #for splits
+        #Hide the cards in the hand. Show a self.abstract
+        #add the Hand to a to the Dealer.splitHands
+        self.label.undraw()
+        for card in self.cards:
+            card.hide()
+        self.abstract.show()
+        
+    def activate(self): #for splits
+        #Hide the self.abstract and show the cards with the label
+        #Remove the hand from Dealer.splitHands
+        self.abstract.hide()
+        self.show()
+        
+    def makeAbstract(self, x): #initializes self.abstract (which is used for splits)
+        self.abstract = Abstract(self.win, x, self.sum)

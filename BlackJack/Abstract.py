@@ -1,5 +1,5 @@
 from graphics import *
-class Abstract():
+class Abstract(): #used to represent split hands. Since I did not implement the split command, this has no use. 
     def __init__(self, win, x, value):
         self.win = win
 
