@@ -57,6 +57,22 @@ class Dealer():
     def updateCashTest(self, newCash):#wanted this to be an overload, but gave it a different name. Keep it like that, works just fine
         self.cashText.setText("Cash: ${0:6<}".format(newCash))
 
+    def testShuffle(self): ###Used for testing special cases
+        c = 0
+        for i in range(72):
+                self.shoe[c] = 12
+                c += 1
+                self.shoe[c] = 12
+                c += 1
+                self.shoe[c] = 12
+                c += 1
+                self.shoe[c] = 11
+                c += 1
+                self.shoe[c] = 12
+                c += 1
+                self.shoe[c] = 11
+                c += 1
+
     def fillDeck(self):
         i = 1
         val = 2
@@ -182,6 +198,15 @@ class Dealer():
         card4 = self.__drawCard__()
         self.dealerHand.draw(card4)
 
+        ###Check if can show the optional buttons
+        if(len(self.playerHand.cards) == 2 ): #Check for split option
+            if(self.playerHand.cards[0].value == self.playerHand.cards[1].value):
+                self.splitButton.show()
+        if(self.bank.cash >= self.bank.bet and len(self.playerHand.cards) == 2): #Check for double option
+            self.doubleButton.show()
+        if(self.dealerHand.cards[1].value == 11 and self.bank.cash >= self.bank.bet and len(self.playerHand.cards) == 2):  #Check for insurance option
+            self.insuraceButton.show()
+
     def readAction(self, hasMoneyForDouble):        #reads buttons and check hand values
         while(True):
             if(self.playerHand.sum == 21):#Check for BJ
@@ -204,14 +229,6 @@ class Dealer():
                 time.sleep(1.5)
                 return 1
 
-            ###Check if can show the optional buttons
-            if(len(self.playerHand.cards) == 2 ): #Check for split option
-                if(self.playerHand.cards[0].value == self.playerHand.cards[1].value):
-                    self.splitButton.show()
-            if(hasMoneyForDouble and len(self.playerHand.cards) == 2): #Check for double option
-                self.doubleButton.show()
-            if(self.dealerHand.cards[1].value == 11 and hasMoneyForDouble and len(self.playerHand.cards) == 2):  #Check for insurance option
-                self.insuraceButton.show()
 
             p = self.win.getMouse() #Read input
 
@@ -298,8 +315,9 @@ class Dealer():
                     self.bank.cash += sideBet
                     self.insuranceText.setText("Insurance Triggered!")
                     self.insuranceText.draw(self.win)
-                    time.sleep(1.5)
+                    time.sleep(2)
                     self.insuranceText.undraw()
+                    time.sleep(1.5)
                     return 1    #Return loose, because if the user had 21, it would have triggered above
                 else:
                     self.bank.cash -= sideBet
@@ -312,7 +330,7 @@ class Dealer():
 
             elif(self.splitButton.clicked(p)):
                 pass
-
+            pass
     def dealerDraw(self):
         while(True):
             if(self.dealerHand.sum < 17):
